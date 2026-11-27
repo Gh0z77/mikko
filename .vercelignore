@@ -1,0 +1,8 @@
+# Never upload secrets or local data with `vercel` CLI deploys.
+.env
+.env*.local
+.data/
+.bot/
+.next/
+node_modules/
+tests/
