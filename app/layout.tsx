@@ -5,6 +5,7 @@ import { siteUrl } from '@/lib/site';
 import { refreshCatalog } from '@/lib/catalog';
 import { CatalogHydrator } from '@/components/providers/CatalogHydrator';
 import { Splash } from '@/components/layout/Splash';
+import { DragScroll } from '@/components/ui/DragScroll';
 import { StoreProvider } from '@/components/providers/StoreProvider';
 import { TelegramWebApp } from '@/components/providers/TelegramWebApp';
 
@@ -55,6 +56,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <StoreProvider>
           {children}
           <TelegramWebApp />
+          <DragScroll />
         </StoreProvider>
         </CatalogHydrator>
       </body>
