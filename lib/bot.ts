@@ -9,6 +9,7 @@ import { httpsSiteUrl } from './site';
 import { applyStatus, customerText, placeOrder, staffKeyboard, staffText } from './order';
 import { reverseGeocode } from './geocode';
 import { refreshCatalog } from './catalog';
+import { clearFailures, lockedOut, recordFailure } from './attempts';
 import {
   addStaff,
   bumpInterest,
@@ -448,9 +449,15 @@ async function handleMessage(message: Message, s: Session) {
   // Staff onboarding: /xodim <code> (code from the admin panel / STAFF_PIN).
   if (command === '/xodim') {
     if (await isStaffChat(chatId)) return render({ chatId }, await staffMenu());
+    const key = `xodim:${chatId}`;
+    if (await lockedOut(key)) {
+      return tg('sendMessage', { chat_id: chatId, text: "🔒 Juda ko'p noto'g'ri urinish. 15 daqiqadan keyin qayta urinib ko'ring." });
+    }
     if (!process.env.STAFF_PIN || arg !== process.env.STAFF_PIN) {
+      await recordFailure(key);
       return tg('sendMessage', { chat_id: chatId, text: "🔒 Kod noto'g'ri. Kodni do'kon rahbaridan oling: /xodim KOD" });
     }
+    await clearFailures(key);
     await addStaff(chatId, name || null, message.from?.username ?? null);
     await tg('sendMessage', { chat_id: chatId, text: `✅ Xush kelibsiz, ${name || 'hamkasb'}! Endi yangi buyurtmalar shu yerga keladi.` });
     return render({ chatId }, await staffMenu());

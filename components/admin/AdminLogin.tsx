@@ -20,7 +20,7 @@ export function AdminLogin() {
     });
     setBusy(false);
     if (response.ok) return window.location.reload();
-    setError(response.status === 429 ? "Ko'p urinish. 5 daqiqadan keyin qayta urining." : "Kod noto'g'ri");
+    setError(response.status === 429 ? "Ko'p urinish. 15 daqiqadan keyin qayta urining." : "Kod noto'g'ri");
     setPin('');
   }
 
