@@ -23,6 +23,7 @@ export function ProductCard({ product, priority = false, className }: ProductCar
   const { addToCart } = useStore();
   const [sizeOpen, setSizeOpen] = useState(false);
   const [added, setAdded] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const discount = discountPercent(product.price, product.oldPrice);
   const isNew = product.badge === 'new';
 
@@ -46,14 +47,15 @@ export function ProductCard({ product, priority = false, className }: ProductCar
           className="pointer-events-none absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 scale-50 rounded-full bg-orange-soft opacity-0 blur-2xl transition-all duration-700 ease-silk group-hover/card:scale-100 group-hover/card:opacity-100"
         />
         <Link href={`/product/${product.slug}`} aria-label={product.name} className="relative block">
-          <div className="relative aspect-[4/4.55]">
+          <div className={clsx('relative aspect-[4/4.55]', !loaded && 'skeleton')}>
             <Image
               src={product.images[0]}
               alt={product.name}
               fill
               priority={priority}
+              onLoad={() => setLoaded(true)}
               sizes="(min-width: 1024px) 24vw, (min-width: 640px) 32vw, 47vw"
-              className="object-contain p-3 transition-transform duration-[850ms] ease-silk group-hover/card:-translate-y-1.5 group-hover/card:-rotate-2 group-hover/card:scale-[1.07] sm:p-4"
+              className="object-contain p-3 transition-[transform,opacity] duration-[850ms] ease-silk group-hover/card:-translate-y-1.5 group-hover/card:-rotate-2 group-hover/card:scale-[1.07] sm:p-4"
             />
           </div>
         </Link>

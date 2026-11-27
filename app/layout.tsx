@@ -4,6 +4,7 @@ import './globals.css';
 import { siteUrl } from '@/lib/site';
 import { refreshCatalog } from '@/lib/catalog';
 import { CatalogHydrator } from '@/components/providers/CatalogHydrator';
+import { Splash } from '@/components/layout/Splash';
 import { StoreProvider } from '@/components/providers/StoreProvider';
 import { TelegramWebApp } from '@/components/providers/TelegramWebApp';
 
@@ -47,8 +48,9 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const catalog = await refreshCatalog();
   return (
-    <html lang="uz" className={`${display.variable} ${sans.variable}`}>
+    <html lang="uz" className={`${display.variable} ${sans.variable}`} suppressHydrationWarning>
       <body className="min-h-dvh bg-cream">
+        <Splash />
         <CatalogHydrator products={catalog}>
         <StoreProvider>
           {children}

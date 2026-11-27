@@ -38,6 +38,8 @@ import { locateErrorText, locateMe } from '@/lib/locate';
 import type { PublicOrder } from '@/lib/orderStatus';
 import { OrderTimeline } from '@/components/ui/OrderTimeline';
 import { MascotSign } from '@/components/ui/MascotSign';
+import { Skel } from '@/components/ui/Skeletons';
+import { useIncremental } from '@/components/ui/useIncremental';
 import type { Product } from '@/lib/types';
 import { haptic, useBackButton, useMainButton, useTelegram } from './useTelegram';
 
@@ -115,12 +117,24 @@ function ProductTile({ product, onOpen, index = 0 }: { product: Product; onOpen:
 }
 
 function Grid({ items, onOpen }: { items: Product[]; onOpen: (p: Product) => void }) {
+  const { visible, hasMore, sentinel } = useIncremental(items, 10);
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {items.map((product, index) => (
-        <ProductTile key={product.slug} product={product} onOpen={onOpen} index={index} />
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-2 gap-3">
+        {visible.map((product, index) => (
+          <ProductTile key={product.slug} product={product} onOpen={onOpen} index={index % 10} />
+        ))}
+        {hasMore &&
+          [0, 1].map((i) => (
+            <div key={`s${i}`} aria-hidden="true" className="rounded-[22px] bg-white p-2">
+              <Skel className="aspect-square w-full rounded-[16px]" />
+              <Skel className="mt-2 h-3 w-4/5" />
+              <Skel className="mt-2 h-3 w-1/2" />
+            </div>
+          ))}
+      </div>
+      {hasMore && <div ref={sentinel} aria-hidden="true" className="h-px" />}
+    </>
   );
 }
 

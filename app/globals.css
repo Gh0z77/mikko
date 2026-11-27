@@ -113,3 +113,101 @@
     mask-image: linear-gradient(to right, black 82%, transparent);
   }
 }
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(100deg, #f4e8dc 30%, #fdf7f1 50%, #f4e8dc 70%);
+  background-size: 300% 100%;
+  animation: skeleton-shimmer 1.3s ease-in-out infinite;
+}
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* First-visit splash: the logo "writes" itself, then the page fades in. */
+#mikko-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: #fff8f3;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+html[data-splash='off'] #mikko-splash {
+  display: none;
+}
+html[data-splash='out'] #mikko-splash {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.splash-logo {
+  display: flex;
+  align-items: flex-end;
+  height: 64px;
+}
+.splash-logo img {
+  height: 100%;
+  width: auto;
+}
+.splash-bear {
+  transform-origin: 50% 85%;
+  animation: splash-bear 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.splash-word {
+  clip-path: inset(0 100% 0 0);
+  animation: splash-write 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.35s forwards;
+}
+.splash-bar {
+  margin: 28px auto 0;
+  height: 3px;
+  width: 140px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #ffe6d3;
+}
+.splash-bar span {
+  display: block;
+  height: 100%;
+  width: 40%;
+  border-radius: 99px;
+  background: #fe6700;
+  animation: splash-progress 1.1s ease-in-out infinite;
+}
+@keyframes splash-bear {
+  0% {
+    transform: translateY(-40%) rotate(-20deg) scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(5%) rotate(8deg) scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes splash-write {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes splash-progress {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-word {
+    clip-path: none;
+  }
+}
