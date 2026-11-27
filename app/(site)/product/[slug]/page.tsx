@@ -7,6 +7,7 @@ import { PurchasePanel } from '@/components/product/PurchasePanel';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { categoryLabels, getProduct, getRelated, products } from '@/lib/products';
+import { refreshCatalog } from '@/lib/catalog';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -18,6 +19,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  await refreshCatalog();
   const product = getProduct(slug);
   if (!product) return { title: 'Mahsulot topilmadi' };
   return {
@@ -33,6 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
+  await refreshCatalog();
   const product = getProduct(slug);
   if (!product) notFound();
 

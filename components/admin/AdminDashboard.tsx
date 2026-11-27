@@ -25,6 +25,7 @@ import {
   X,
 } from 'lucide-react';
 import { StatusIcon } from '@/components/ui/StatusIcon';
+import { ProductsManager } from './ProductsManager';
 import { formatPrice } from '@/lib/format';
 import { products } from '@/lib/products';
 import { branches, mapsLink, phoneHref } from '@/lib/branches';
@@ -85,7 +86,7 @@ export function AdminDashboard({ staffPin, botUsername }: { staffPin: string; bo
   const [openId, setOpenId] = useState<string | null>(null);
   const [fresh, setFresh] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState<'orders' | 'staff'>('orders');
+  const [tab, setTab] = useState<'orders' | 'products' | 'staff'>('orders');
   const known = useRef<Set<string> | null>(null);
 
   const load = useCallback(async () => {
@@ -171,6 +172,7 @@ export function AdminDashboard({ staffPin, botUsername }: { staffPin: string; bo
           <nav className="ml-auto flex gap-1 rounded-full bg-cream p-1">
             {([
               ['orders', 'Buyurtmalar'],
+              ['products', 'Mahsulotlar'],
               ['staff', 'Xodimlar'],
             ] as const).map(([key, label]) => (
               <button
@@ -198,7 +200,9 @@ export function AdminDashboard({ staffPin, botUsername }: { staffPin: string; bo
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-6">
-        {tab === 'staff' ? (
+        {tab === 'products' ? (
+          <ProductsManager />
+        ) : tab === 'staff' ? (
           <section className="grid gap-5 lg:grid-cols-[1fr_1fr]">
             <div className="rounded-3xl bg-white p-6">
               <h2 className="flex items-center gap-2 text-[20px]"><Users className="h-5 w-5 text-orange" /> Xodimlar ({staff.length})</h2>

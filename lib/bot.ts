@@ -8,6 +8,7 @@ import { esc, tg, tgCall } from './telegram';
 import { httpsSiteUrl } from './site';
 import { applyStatus, customerText, placeOrder, staffKeyboard, staffText } from './order';
 import { reverseGeocode } from './geocode';
+import { refreshCatalog } from './catalog';
 import {
   addStaff,
   bumpInterest,
@@ -117,7 +118,7 @@ async function forYou(chatId: number): Promise<string[]> {
 const httpsSite = httpsSiteUrl;
 const cartCount = (s: Session) => s.cart.reduce((sum, line) => sum + line.qty, 0);
 const cartTotal = (s: Session) => s.cart.reduce((sum, line) => sum + products[line.p].price * line.qty, 0);
-const tgImage = (image: string) => image.replace('/images/', '/images/tg/').replace(/\.webp$/, '.jpg');
+const tgImage = (image: string) => (image.startsWith('https://') ? image : image.replace('/images/', '/images/tg/').replace(/\.webp$/, '.jpg'));
 const fullName = (user?: User) => [user?.first_name, user?.last_name].filter(Boolean).join(' ');
 
 // ---------- Rendering ----------
@@ -137,6 +138,7 @@ interface Ctx {
 }
 
 async function photoRef(publicPath: string) {
+  if (publicPath.startsWith('https://')) return { ref: publicPath };
   const https = httpsSite();
   if (https) return { ref: `${https}${publicPath}` };
   const cached = await kvGet<string>(`file:${publicPath}`);
@@ -425,6 +427,7 @@ async function staffMenu(): Promise<View> {
 export async function handleUpdate(update: Update) {
   const chatId = update.callback_query?.message?.chat.id ?? update.message?.chat.id;
   if (!chatId) return;
+  await refreshCatalog();
   const s = await loadSession(chatId);
   try {
     if (update.callback_query) await handleCallback(update.callback_query, s);

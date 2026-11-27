@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { products } from './products';
+import { refreshCatalog } from './catalog';
 import { shippingFor } from './nav';
 import { formatPrice } from './format';
 import { branches, mapsLink } from './branches';
@@ -175,6 +176,7 @@ export async function applyStatus(id: string, status: OrderStatus, by?: string):
 
 /** Validates, prices from our catalog (never from the client), stores, then tells staff and the customer. */
 export async function placeOrder(input: OrderInput): Promise<OrderResult> {
+  await refreshCatalog(); // price new/edited items from the live catalog
   const phoneDigits = String(input.phone ?? '').replace(/\D/g, '');
   if (!input.name || phoneDigits.length < 12) return { ok: false, error: 'missing_contact' };
 

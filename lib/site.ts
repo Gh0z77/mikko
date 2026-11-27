@@ -6,7 +6,8 @@ import { createHash } from 'node:crypto';
  */
 export function siteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return explicit.replace(/\/$/, '');
+  // A copied local .env (http://localhost) must not win on Vercel.
+  if (explicit && (explicit.startsWith('https://') || !process.env.VERCEL)) return explicit.replace(/\/$/, '');
   const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
   if (vercel) return `https://${vercel}`;
   return 'http://localhost:3000';

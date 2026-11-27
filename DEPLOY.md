@@ -57,3 +57,11 @@ Tamom: bot Vercel'da ishlayapti, botda pastki **"Do'kon"** tugmasi Mini App'ni o
 - **Bot nomi va tavsifi** (bir marta, ixtiyoriy): kompyuterda `.env.local` ga sayt manzilini yozib `npm run bot:setup`.
 - **Xavfsizlik**: token yozishmada ochiq ko'ringan bo'lsa, ishga tushirishdan oldin @BotFather'da `/revoke` qilib yangisini oling va Vercel'dagi `TELEGRAM_BOT_TOKEN` ni almashtiring.
 - **Admin panel**: `https://<domen>/admin`. Xodimlar botga `/xodim <STAFF_PIN>` yozib qo'shiladi.
+
+## Yangi mahsulot qo'shish (xodimlar uchun)
+
+1. `https://<domen>/admin` → kirish kodi (`ADMIN_PIN`).
+2. **Mahsulotlar → Yangi mahsulot**: rasmlarni yuklang (birinchisi asosiy), nomi, kategoriya, narx (chegirma bo'lsa — eski narx), o'lchamlar, ranglar, tavsif.
+3. **Mahsulotni qo'shish** — sayt, Telegram bot va Mini App'da darhol paydo bo'ladi.
+
+Mavjud mahsulotni **Tahrirlash** (narx, o'lcham, rasm) yoki ko'z belgisi bilan **yashirish** (sotuvda yo'q) mumkin. Rasmlar Supabase Storage'dagi `products` bucket'ida saqlanadi (birinchi yuklashda o'zi yaratiladi).

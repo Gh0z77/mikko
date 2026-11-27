@@ -15,8 +15,14 @@ export interface StaffMember {
   addedAt: number;
 }
 
+/** Next.js data-cache hint for reads that may be cached (invalidated with revalidateTag). */
+export interface CacheHint {
+  tags: string[];
+  revalidate: number;
+}
+
 interface Store {
-  kvGet<T>(key: string): Promise<T | null>;
+  kvGet<T>(key: string, cache?: CacheHint): Promise<T | null>;
   kvSet(key: string, value: unknown, ttlSec?: number): Promise<void>;
   saveOrder(order: OrderRecord): Promise<void>;
   getOrder(id: string): Promise<OrderRecord | null>;
@@ -43,7 +49,7 @@ function supabaseConfig() {
 }
 
 function supabaseStore(cfg: { url: string; key: string }): Store {
-  const rest = async (path: string, init: RequestInit = {}, prefer?: string): Promise<unknown> => {
+  const rest = async (path: string, init: RequestInit = {}, prefer?: string, hint?: CacheHint): Promise<unknown> => {
     const response = await fetch(`${cfg.url}/rest/v1/${path}`, {
       ...init,
       headers: {
@@ -52,7 +58,7 @@ function supabaseStore(cfg: { url: string; key: string }): Store {
         'Content-Type': 'application/json',
         ...(prefer ? { Prefer: prefer } : {}),
       },
-      cache: 'no-store',
+      ...(hint ? ({ next: hint } as RequestInit) : { cache: 'no-store' }),
     });
     if (!response.ok) throw new Error(`supabase ${init.method ?? 'GET'} ${path.split('?')[0]}: ${response.status} ${await response.text()}`);
     const text = await response.text();
@@ -64,8 +70,8 @@ function supabaseStore(cfg: { url: string; key: string }): Store {
   const dataOf = <T>(rows: unknown) => ((rows as { data: T }[] | null) ?? []).map((r) => r.data);
 
   return {
-    kvGet: async <T>(key: string) => {
-      const rows = (await rest(`kv?k=eq.${enc(key)}&select=v,expires_at`)) as { v: T; expires_at: number | null }[];
+    kvGet: async <T>(key: string, hint?: CacheHint) => {
+      const rows = (await rest(`kv?k=eq.${enc(key)}&select=v,expires_at`, {}, undefined, hint)) as { v: T; expires_at: number | null }[];
       const row = rows[0];
       return row && (!row.expires_at || row.expires_at > Date.now()) ? row.v : null;
     },
@@ -189,7 +195,7 @@ function store(): Promise<Store> {
 
 export const storageKind = () => (supabaseConfig() ? 'supabase' : 'sqlite');
 
-export const kvGet = async <T>(key: string) => (await store()).kvGet<T>(key);
+export const kvGet = async <T>(key: string, cache?: CacheHint) => (await store()).kvGet<T>(key, cache);
 export const kvSet = async (key: string, value: unknown, ttlSec?: number) => (await store()).kvSet(key, value, ttlSec);
 export const saveOrder = async (order: OrderRecord) => (await store()).saveOrder(order);
 export const getOrder = async (id: string) => (await store()).getOrder(id);

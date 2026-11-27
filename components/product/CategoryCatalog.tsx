@@ -1,9 +1,11 @@
 import { CatalogView } from '@/components/product/CatalogView';
 import { categories, getProductsByCategory } from '@/lib/products';
+import { refreshCatalog } from '@/lib/catalog';
 import type { CategorySlug } from '@/lib/types';
 import { TrackCategory } from './TrackCategory';
 
-export function CategoryCatalog({ slug }: { slug: CategorySlug }) {
+export async function CategoryCatalog({ slug }: { slug: CategorySlug }) {
+  await refreshCatalog();
   const category = categories.find((item) => item.slug === slug);
   if (!category) return null;
 

@@ -77,7 +77,8 @@ const red = { name: 'Qizil', hex: '#C0392B' };
 const orange = { name: 'Oranje', hex: '#FF7A00' };
 const white = { name: 'Oq', hex: '#FFFFFF' };
 
-export const products: Product[] = [
+/** Built-in starter catalog; staff edits from the admin panel are layered on top (lib/catalog.ts). */
+export const seedProducts: Product[] = [
   {
     slug: 'bej-ayiqcha-sviter',
     name: 'Ayiqcha naqshli bej sviter',
@@ -484,6 +485,13 @@ export const products: Product[] = [
     createdAt: 1,
   },
 ];
+
+/** The live catalog. Same array instance everywhere — setCatalog() swaps its contents in place. */
+export const products: Product[] = [...seedProducts];
+
+export function setCatalog(list: Product[]) {
+  products.splice(0, products.length, ...list);
+}
 
 export const sizeGuide = [
   { size: '74', age: '6–9 oy', height: '68–74 sm' },

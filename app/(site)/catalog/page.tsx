@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { CatalogView } from '@/components/product/CatalogView';
 import { products, searchProducts } from '@/lib/products';
+import { refreshCatalog } from '@/lib/catalog';
 
 export const metadata: Metadata = {
   title: 'Katalog',
@@ -17,6 +18,7 @@ export default async function CatalogPage({
 }: {
   searchParams: Promise<{ sort?: string; q?: string; size?: string }>;
 }) {
+  await refreshCatalog();
   const { sort, q, size } = await searchParams;
   const initialSizes = (size ?? '').split(',').filter((s) => /^\d{2,3}$/.test(s)).slice(0, 6);
   const query = q?.trim().slice(0, 60);

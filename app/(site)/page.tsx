@@ -1,4 +1,5 @@
 import { HeroRack } from '@/components/home/HeroRack';
+import { refreshCatalog } from '@/lib/catalog';
 import { TrustBar } from '@/components/home/TrustBar';
 import { Marquee } from '@/components/home/Marquee';
 import { CategorySection } from '@/components/home/CategorySection';
@@ -11,7 +12,8 @@ import { ForYouSection } from '@/components/home/ForYouSection';
 import { NewArrivals } from '@/components/home/NewArrivals';
 import { EditorialStrip } from '@/components/home/EditorialStrip';
 
-export default function HomePage() {
+export default async function HomePage() {
+  await refreshCatalog();
   return (
     <>
       <HeroRack />

@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
 import { CatalogView } from '@/components/product/CatalogView';
 import { getSaleProducts } from '@/lib/products';
+import { refreshCatalog } from '@/lib/catalog';
 
 export const metadata: Metadata = {
   title: 'Aksiyalar',
   description: "Chegirmadagi bolalar kiyimlari: mavsumiy to'plamlar va oxirgi o'lchamlar.",
 };
 
-export default function SalePage() {
+export default async function SalePage() {
+  await refreshCatalog();
   const saleProducts = getSaleProducts();
 
   return (

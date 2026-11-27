@@ -19,7 +19,9 @@ if (!token) {
   process.exit(0);
 }
 
-const site = (env.NEXT_PUBLIC_SITE_URL || (env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : '')).replace(/\/$/, '');
+// Same rule as lib/site.ts → siteUrl(): a copied local http:// URL is ignored on Vercel.
+const explicit = env.NEXT_PUBLIC_SITE_URL && (env.NEXT_PUBLIC_SITE_URL.startsWith('https://') || !env.VERCEL) ? env.NEXT_PUBLIC_SITE_URL : '';
+const site = (explicit || (env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : '')).replace(/\/$/, '');
 // Same derivation as lib/site.ts → webhookSecret()
 const secret = env.TELEGRAM_WEBHOOK_SECRET || createHash('sha256').update(`mikko-webhook:${token}`).digest('hex');
 

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import { Fredoka, Manrope } from 'next/font/google';
 import './globals.css';
 import { siteUrl } from '@/lib/site';
+import { refreshCatalog } from '@/lib/catalog';
+import { CatalogHydrator } from '@/components/providers/CatalogHydrator';
 import { StoreProvider } from '@/components/providers/StoreProvider';
 import { TelegramWebApp } from '@/components/providers/TelegramWebApp';
 
@@ -42,14 +44,17 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const catalog = await refreshCatalog();
   return (
     <html lang="uz" className={`${display.variable} ${sans.variable}`}>
       <body className="min-h-dvh bg-cream">
+        <CatalogHydrator products={catalog}>
         <StoreProvider>
           {children}
           <TelegramWebApp />
         </StoreProvider>
+        </CatalogHydrator>
       </body>
     </html>
   );
